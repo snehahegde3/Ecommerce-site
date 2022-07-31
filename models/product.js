@@ -1,15 +1,16 @@
-//adding a file system for storing and retrieveing data
 const fs = require('fs');
 const path = require('path');
+
 const p = path.join(
-  path.dirname(require.main.filename),
+  path.dirname(process.mainModule.filename),
   'data',
   'products.json'
 );
-const getProductsfromFile = (cb) => {
+
+const getProductsFromFile = cb => {
   fs.readFile(p, (err, fileContent) => {
     if (err) {
-      return cb([]);
+      cb([]);
     } else {
       cb(JSON.parse(fileContent));
     }
@@ -17,24 +18,23 @@ const getProductsfromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, decription, price) {
+  constructor(title, imageUrl, description, price) {
     this.title = title;
     this.imageUrl = imageUrl;
-    this.decription = decription;
+    this.description = description;
     this.price = price;
   }
+
   save() {
-    //path you want to store
-    getProductsfromFile((products) => {
+    getProductsFromFile(products => {
       products.push(this);
-      fs.writeFile(p, JSON.stringify(products), (err) => {
+      fs.writeFile(p, JSON.stringify(products), err => {
         console.log(err);
       });
     });
   }
 
-  //json.parse is async
   static fetchAll(cb) {
-    getProductsfromFile(cb);
+    getProductsFromFile(cb);
   }
 };
