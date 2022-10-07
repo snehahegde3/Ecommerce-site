@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 //pool to be able to run multiple queries at the same time
 const pool = mysql.createPool({
