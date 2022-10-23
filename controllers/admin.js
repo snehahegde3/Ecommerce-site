@@ -9,12 +9,6 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const price = req.body.price;
-  const description = req.body.description;
-  const product = new Product(null, title, imageUrl, description, price);
-
   // product
   //   .save()
   //   .then(() => {
@@ -25,6 +19,10 @@ exports.postAddProduct = (req, res, next) => {
   // userId: req.user.id;
   //when we create associations, sequalize creates
   //methods that make it easier to mainitain those
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
   req.user
     .createProduct({
       title: title,
@@ -32,14 +30,20 @@ exports.postAddProduct = (req, res, next) => {
       imageUrl: imageUrl,
       description: description,
     })
-    .then(res.redirect('/admin/products'))
-    .catch((err) => console.log(err));
+    .then((result) => {
+      // console.log(result);
+      console.log('Created Product');
+      res.redirect('/admin/products');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
   if (!editMode) {
-    res.redirect('/');
+    return res.redirect('/');
   }
   const prodId = req.params.productId;
   Product.findByPk(prodId)
@@ -117,6 +121,8 @@ exports.postDeleteProduct = (req, res, next) => {
     .then((product) => {
       return product.destroy();
     })
+    .then((result) => {
+      res.redirect('/admin/products');
+    })
     .catch((err) => console.log(err));
-  res.redirect('/admin/products');
 };
