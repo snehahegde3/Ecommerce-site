@@ -14,18 +14,24 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   const product = new Product(null, title, imageUrl, description, price);
+
   // product
   //   .save()
   //   .then(() => {
   //     res.redirect('/');
   //   })
   //   .catch((err) => console.log(err));
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  })
+
+  // userId: req.user.id;
+  //when we create associations, sequalize creates
+  //methods that make it easier to mainitain those
+  req.user
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+    })
     .then(res.redirect('/admin/products'))
     .catch((err) => console.log(err));
 };
@@ -71,6 +77,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.imageUrl = updatedImageUrl;
       product.description = updatedDescription;
+
       //saves and creates if not already there
       return product.save();
     })
@@ -89,7 +96,10 @@ exports.getProducts = (req, res, next) => {
   //     path: '/admin/products',
   //   });
   // });
-  Product.findAll()
+
+  //products by the sepcific user
+  req.user
+    .getProducts()
     .then((products) => {
       res.render('admin/products', {
         prods: products,
